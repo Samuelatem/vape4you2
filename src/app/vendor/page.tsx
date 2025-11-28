@@ -152,7 +152,7 @@ export default function VendorDashboard() {
       }
       if (interval) clearInterval(interval)
     }
-  }, [session, status, router, fetchVendorData])
+  }, [session, status, router, fetchVendorData, socket])
 
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     try {

@@ -72,11 +72,25 @@ function PaymentContent() {
 
   const copyToClipboard = async (text: string, key: string) => {
     try {
-      await navigator.clipboard.writeText(text)
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text)
+      } else {
+        // Fallback for older mobile browsers
+        const textarea = document.createElement('textarea')
+        textarea.value = text
+        textarea.style.position = 'fixed'
+        textarea.style.opacity = '0'
+        document.body.appendChild(textarea)
+        textarea.focus()
+        textarea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textarea)
+      }
       setCopied(key)
       setTimeout(() => setCopied(null), 2000)
     } catch (error) {
       console.error('Failed to copy:', error)
+      alert('Unable to copy automatically. Please long-press and copy the text manually.')
     }
   }
 
@@ -138,7 +152,7 @@ function PaymentContent() {
                 </h2>
                 
                 <div className="space-y-3">
-                  {paymentData.instructions.map((instruction: string, index: number) => (
+                  {(paymentData.instructions || []).map((instruction: string, index: number) => (
                     <div key={index} className="flex items-start">
                       <div className="flex-shrink-0 w-6 h-6 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-sm font-semibold mr-3 mt-0.5">
                         {index + 1}
@@ -146,6 +160,9 @@ function PaymentContent() {
                       <p className="text-gray-700">{instruction}</p>
                     </div>
                   ))}
+                  {(!paymentData.instructions || paymentData.instructions.length === 0) && (
+                    <p className="text-gray-600">Follow the instructions provided by your wallet to complete the payment.</p>
+                  )}
                 </div>
 
                 {/* Payment-specific details */}
@@ -219,11 +236,12 @@ function PaymentContent() {
 
                 {/* QR Code for Bitcoin payment */}
                 <div className="text-center mb-6">
-                  <div className="bg-white border-2 border-gray-200 rounded-lg p-4 inline-block">
+                  <div className="bg-white border-2 border-gray-200 rounded-lg p-4 inline-flex flex-col items-center w-full max-w-sm mx-auto">
                     <img
                       src={`https://chart.googleapis.com/chart?chs=256x256&cht=qr&chl=${encodeURIComponent(paymentData.qrCode)}&choe=UTF-8`}
                       alt="Bitcoin Payment QR Code"
-                      className="w-64 h-64"
+                      className="w-full max-w-xs sm:max-w-sm h-auto"
+                      loading="lazy"
                     />
                     <p className="text-sm text-gray-600 mt-2">
                       {paymentData.amount} BTC to {paymentData.address}
@@ -231,6 +249,12 @@ function PaymentContent() {
                     <p className="text-sm text-gray-600 mt-2">
                       Scan with your Bitcoin wallet
                     </p>
+                    <Button
+                      onClick={() => window.location.assign(paymentData.qrCode)}
+                      className="w-full mt-4 bg-orange-500 hover:bg-orange-600 text-white"
+                    >
+                      Open in Wallet App
+                    </Button>
                   </div>
                 </div>
 

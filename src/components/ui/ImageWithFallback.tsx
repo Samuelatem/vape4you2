@@ -14,7 +14,7 @@ interface ImageWithFallbackProps {
 
 export function ImageWithFallback({
   src,
-  alt,
+  alt = 'Product image',
   fill = false,
   className = '',
   sizes,
@@ -35,5 +35,5 @@ export function ImageWithFallback({
     ...(fill ? {} : { width: 640, height: 640 }),
   }
 
-  return <Image {...imageProps} />
+  return <Image {...imageProps} alt={alt || ''} />
 }
