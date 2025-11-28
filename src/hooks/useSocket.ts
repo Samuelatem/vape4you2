@@ -13,18 +13,33 @@ export const useSocket = ({ userId, userName, userRole }: UseSocketOptions) => {
   useEffect(() => {
     if (!userId || !userName || !userRole) return
 
-    // Force WebSocket transport and use the configured domain or current origin
-    const base = process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : 'https://vape4you-com.onrender.com')
-    // Force WebSocket transport and use the current domain
-      const socket = io(base, {
+    const resolveBaseUrl = () => {
+      if (typeof window !== 'undefined' && window.location?.origin) {
+        return window.location.origin
+      }
+      if (process.env.NEXT_PUBLIC_SOCKET_URL) {
+        return process.env.NEXT_PUBLIC_SOCKET_URL
+      }
+      if (process.env.NEXT_PUBLIC_APP_URL) {
+        return process.env.NEXT_PUBLIC_APP_URL
+      }
+      return 'https://vape4you-com.onrender.com'
+    }
+
+    const base = resolveBaseUrl()
+    const socket = io(base, {
       path: '/api/socketio',
       autoConnect: true,
       reconnection: true,
-      reconnectionAttempts: 5,
+      reconnectionAttempts: 8,
       reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
       transports: ['websocket', 'polling'],
+      withCredentials: true,
       addTrailingSlash: false,
     })
+
+    console.info('[socket] connecting to', base)
 
     socketRef.current = socket
 

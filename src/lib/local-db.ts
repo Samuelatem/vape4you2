@@ -224,6 +224,15 @@ export class LocalDatabase {
     }
   }
 
+  async getProductsByVendor(vendorId: string) {
+    if (!vendorId) return []
+
+    // Return a shallow copy so callers cannot mutate internal state
+    return this.db.products
+      .filter(product => product.vendorId === vendorId)
+      .map(product => ({ ...product }))
+  }
+
   async addProduct(productData: any) {
     const newProduct = {
       id: `prod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,

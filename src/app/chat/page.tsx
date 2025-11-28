@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Send, MessageCircle, Users, Circle, RefreshCw } from 'lucide-react'
@@ -54,51 +54,106 @@ export default function ChatPage() {
   const [availableUsers, setAvailableUsers] = useState<ChatUser[]>([])
   const [loading, setLoading] = useState(false)
   const [sending, setSending] = useState(false)
-  const [isTyping, setIsTyping] = useState(false)
   const [typingUser, setTypingUser] = useState<string | null>(null)
+  const [socketStatus, setSocketStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const selectedSessionRef = useRef<ChatSession | null>(null)
   const socket = useSocket({
     userId: session?.user?.id,
     userName: session?.user?.name,
     userRole: session?.user?.role as 'vendor' | 'client'
   })
 
+  useEffect(() => {
+    selectedSessionRef.current = selectedSession
+  }, [selectedSession])
+
   // Load chat data and set up Socket.IO listeners
+  const buildRealtimeMessage = useCallback((
+    payload: { id?: string; chatId: string; message: string; senderId: string; recipientId: string; timestamp?: string },
+    chatSession: ChatSession
+  ): Message | null => {
+    if (!session?.user) return null
+
+    const viewerIsVendor = session.user.id === chatSession.participants.vendorId
+    const otherName = viewerIsVendor ? chatSession.participants.clientName : chatSession.participants.vendorName
+    const otherRole = viewerIsVendor ? 'client' : 'vendor'
+    const isCurrentUserSender = payload.senderId === session.user.id
+
+    return {
+      id: payload.id || `socket-${Date.now()}`,
+      chatId: payload.chatId,
+      message: payload.message,
+      senderId: payload.senderId,
+      senderName: isCurrentUserSender ? (session.user.name || 'You') : otherName,
+      senderRole: isCurrentUserSender ? (session.user.role as 'vendor' | 'client') : otherRole,
+      recipientId: payload.recipientId,
+      recipientName: isCurrentUserSender ? otherName : (session.user.name || ''),
+      timestamp: payload.timestamp || new Date().toISOString(),
+      read: isCurrentUserSender
+    }
+  }, [session?.user])
+
   useEffect(() => {
     if (!session?.user || !socket) return
-    
+
+    setSocketStatus(socket.connected ? 'connected' : 'connecting')
     loadChatData()
     loadAvailableUsers()
-    
-    // Listen for new messages
-    socket.on('receive-message', ({ chatId, message, senderId }) => {
-      if (selectedSession?.id === chatId) {
-        loadMessages(chatId)
-      }
-      loadChatData() // Refresh chat list for unread count
-    })
 
-    // Listen for typing status
-    socket.on('user-typing', ({ chatId, name }) => {
-      if (selectedSession?.id === chatId) {
+    const handleReceiveMessage = (payload: { chatId: string; message: string; senderId: string; recipientId: string; id?: string; timestamp?: string }) => {
+      const activeSession = selectedSessionRef.current
+      if (activeSession && activeSession.id === payload.chatId) {
+        const realtimeMessage = buildRealtimeMessage(payload, activeSession)
+        if (realtimeMessage) {
+          setMessages(prev => [...prev, realtimeMessage])
+          // Scroll to bottom for active chat
+          messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+        }
+      }
+      loadChatData()
+    }
+
+    const handleTyping = ({ chatId, name }: { chatId: string; name: string }) => {
+      if (selectedSessionRef.current?.id === chatId) {
         setTypingUser(name)
       }
-    })
+    }
 
-    // Listen for read receipts
-    socket.on('message-read-receipt', ({ chatId, messageId }) => {
-      if (selectedSession?.id === chatId) {
-        loadMessages(chatId)
+    const handleStopTyping = ({ chatId }: { chatId: string }) => {
+      if (selectedSessionRef.current?.id === chatId) {
+        setTypingUser(null)
       }
-    })
+    }
+
+    const handleMessageRead = ({ chatId, messageId }: { chatId: string; messageId: string }) => {
+      if (selectedSessionRef.current?.id !== chatId) return
+      setMessages(prev => prev.map(msg => (msg.id === messageId ? { ...msg, read: true } : msg)))
+    }
+
+    const handleConnect = () => setSocketStatus('connected')
+    const handleDisconnect = () => setSocketStatus('error')
+    const handleConnectError = () => setSocketStatus('error')
+
+    socket.on('receive-message', handleReceiveMessage)
+    socket.on('user-typing', handleTyping)
+    socket.on('user-stop-typing', handleStopTyping)
+    socket.on('message-read', handleMessageRead)
+    socket.on('connect', handleConnect)
+    socket.on('disconnect', handleDisconnect)
+    socket.on('connect_error', handleConnectError)
 
     return () => {
-      socket.off('receive-message')
-      socket.off('user-typing')
-      socket.off('message-read-receipt')
+      socket.off('receive-message', handleReceiveMessage)
+      socket.off('user-typing', handleTyping)
+      socket.off('user-stop-typing', handleStopTyping)
+      socket.off('message-read', handleMessageRead)
+      socket.off('connect', handleConnect)
+      socket.off('disconnect', handleDisconnect)
+      socket.off('connect_error', handleConnectError)
     }
-  }, [session, selectedSession, socket])
+  }, [session, socket, buildRealtimeMessage])
   
   const loadChatData = async () => {
     try {
@@ -173,7 +228,7 @@ export default function ChatPage() {
       
       if (unreadMessages.length > 0 && socket) {
         unreadMessages.forEach(msg => {
-          socket.emit('mark-as-read', {
+          socket.emit('mark-read', {
             chatId: selectedSession.id,
             messageId: msg.id,
             userId: session.user.id
@@ -210,9 +265,17 @@ export default function ChatPage() {
           chatId: selectedSession.id,
           message: message.trim(),
           senderId: session.user.id,
-          recipientId
+          recipientId,
+          id: data.message?.id,
+          timestamp: data.message?.timestamp
         })
-        await loadMessages(selectedSession.id)
+
+        if (data.message) {
+          setMessages(prev => [...prev, data.message])
+        } else {
+          await loadMessages(selectedSession.id)
+        }
+
         await loadChatData() // Refresh session list
       }
     } catch (error) {
@@ -238,8 +301,25 @@ export default function ChatPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Chat</h1>
-          <p className="text-gray-600 mt-2">Connect with {session.user.role === 'vendor' ? 'clients' : 'vendors'} in real-time</p>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Chat</h1>
+              <p className="text-gray-600 mt-2">Connect with {session.user.role === 'vendor' ? 'clients' : 'vendors'} in real-time</p>
+            </div>
+            <div className="flex items-center text-sm">
+              <span className={`font-semibold ${
+                socketStatus === 'connected'
+                  ? 'text-green-600'
+                  : socketStatus === 'error'
+                  ? 'text-red-600'
+                  : 'text-yellow-600'
+              }`}>
+                {socketStatus === 'connected' && 'Live connection'}
+                {socketStatus === 'connecting' && 'Connecting…'}
+                {socketStatus === 'error' && 'Reconnecting…'}
+              </span>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-200px)]">
@@ -450,11 +530,6 @@ export default function ChatPage() {
                         }
                       }}
                     />
-                    {typingUser && (
-                      <div className="absolute -top-6 left-4 text-sm text-gray-500">
-                        {typingUser} is typing...
-                      </div>
-                    )}
                     <Button
                       onClick={sendMessage}
                       disabled={!message.trim() || sending}
@@ -467,6 +542,9 @@ export default function ChatPage() {
                       )}
                     </Button>
                   </div>
+                  {typingUser && (
+                    <p className="text-sm text-gray-500 mt-2">{typingUser} is typing...</p>
+                  )}
                 </div>
               </>
             ) : (
