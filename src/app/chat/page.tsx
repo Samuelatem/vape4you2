@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Send, MessageCircle, Users, Circle, RefreshCw } from 'lucide-react'
+import { Send, MessageCircle, Users, Circle, RefreshCw, ArrowLeft } from 'lucide-react'
 import { useSocket } from '@/hooks/useSocket'
 import { Button } from '@/components/ui/Button'
 import { formatDistance } from 'date-fns'
@@ -56,6 +56,8 @@ export default function ChatPage() {
   const [sending, setSending] = useState(false)
   const [typingUser, setTypingUser] = useState<string | null>(null)
   const [socketStatus, setSocketStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
+  const [isMobileViewport, setIsMobileViewport] = useState(false)
+  const [mobileView, setMobileView] = useState<'list' | 'conversation'>('list')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const selectedSessionRef = useRef<ChatSession | null>(null)
@@ -68,6 +70,19 @@ export default function ChatPage() {
   useEffect(() => {
     selectedSessionRef.current = selectedSession
   }, [selectedSession])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const handleResize = () => setIsMobileViewport(window.innerWidth < 1024)
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  useEffect(() => {
+    if (!isMobileViewport) return
+    setMobileView(selectedSession ? 'conversation' : 'list')
+  }, [isMobileViewport, selectedSession])
 
   // Load chat data and set up Socket.IO listeners
   const buildRealtimeMessage = useCallback((
@@ -209,11 +224,29 @@ export default function ChatPage() {
         setSelectedSession(data.session)
         await loadMessages(data.session.id)
         await loadChatData()
+        if (isMobileViewport) {
+          setMobileView('conversation')
+        }
       }
     } catch (error) {
       console.error('Error creating chat session:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleSessionSelect = (chatSession: ChatSession) => {
+    setSelectedSession(chatSession)
+    loadMessages(chatSession.id)
+    if (isMobileViewport) {
+      setMobileView('conversation')
+    }
+  }
+
+  const handleBackToList = () => {
+    if (isMobileViewport) {
+      setMobileView('list')
+      setSelectedSession(null)
     }
   }
 
@@ -297,6 +330,9 @@ export default function ChatPage() {
     )
   }
 
+  const showListPanel = !isMobileViewport || mobileView === 'list'
+  const showConversationPanel = !isMobileViewport || mobileView === 'conversation'
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -324,12 +360,22 @@ export default function ChatPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-200px)]">
           {/* Chat List */}
-          <div className="lg:col-span-1 bg-white rounded-lg shadow-sm overflow-hidden">
-            <div className="p-4 border-b border-gray-200">
+          <div
+            className={`${showListPanel ? 'block' : 'hidden'} lg:block lg:col-span-1 bg-white rounded-lg shadow-sm overflow-hidden`}
+          >
+            <div className="p-4 border-b border-gray-200 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900 flex items-center">
                 <Users className="w-5 h-5 mr-2" />
                 {session.user.role === 'vendor' ? 'Clients' : 'Vendors'}
               </h2>
+              {isMobileViewport && selectedSession && (
+                <button
+                  className="text-sm text-purple-600"
+                  onClick={() => setSelectedSession(null)}
+                >
+                  Clear
+                </button>
+              )}
             </div>
             
             <div className="overflow-y-auto">
@@ -345,10 +391,7 @@ export default function ChatPage() {
                   <motion.div
                     key={chatSession.id}
                     whileHover={{ backgroundColor: '#f9fafb' }}
-                    onClick={() => {
-                      setSelectedSession(chatSession)
-                      loadMessages(chatSession.id)
-                    }}
+                    onClick={() => handleSessionSelect(chatSession)}
                     className={`p-4 cursor-pointer border-b border-gray-100 ${
                       selectedSession?.id === chatSession.id ? 'bg-purple-50 border-purple-200' : ''
                     }`}
@@ -426,12 +469,23 @@ export default function ChatPage() {
           </div>
 
           {/* Chat Messages */}
-          <div className="lg:col-span-3 bg-white rounded-lg shadow-sm flex flex-col">
+          <div
+            className={`${showConversationPanel ? 'flex' : 'hidden'} lg:flex lg:col-span-3 bg-white rounded-lg shadow-sm flex-col`}
+          >
             {selectedSession ? (
               <>
                 {/* Chat Header */}
                 <div className="p-4 border-b border-gray-200">
                   <div className="flex items-center">
+                    {isMobileViewport && (
+                      <button
+                        onClick={handleBackToList}
+                        className="mr-3 text-purple-600 flex items-center"
+                        aria-label="Back to chat list"
+                      >
+                        <ArrowLeft className="w-5 h-5" />
+                      </button>
+                    )}
                     {(() => {
                       const isVendor = session.user.role === 'vendor'
                       const otherUser = isVendor 
