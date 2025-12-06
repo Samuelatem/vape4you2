@@ -8,12 +8,12 @@ export const productCategories = [
 
 export const productData = [
   {
-    name: "Premium Vape Disposable #1",
+    name: "RANDM TORNADO Strawberry",
     description: "High-quality disposable vape with premium flavor and long-lasting battery.",
     price: 7,
     images: ["/images/products/1.jpg"],
     category: "disposable",
-    stock: 50,
+    stock: 5000,
     specifications: {
       "Battery": "850mAh",
       "Puffs": "2000+",
@@ -24,12 +24,12 @@ export const productData = [
     rating: { average: 4.5, count: 23 }
   },
   {
-    name: "Luxury Vape Pod #2", 
+    name: "RANDM TORNADO Blueberry on ice", 
     description: "Sleek pod system with refillable cartridges and adjustable airflow.",
     price: 7,
     images: ["/images/products/2.jpg"],
     category: "pod-system",
-    stock: 32,
+    stock: 3200,
     specifications: {
       "Battery": "1200mAh",
       "Capacity": "2ml",
@@ -40,12 +40,12 @@ export const productData = [
     rating: { average: 4.7, count: 18 }
   },
   {
-    name: "Advanced Mod System #3",
+    name: "RANDM TORNADO Skittles",
     description: "Professional-grade mod with temperature control and LED display.",
     price: 8,
     images: ["/images/products/3.jpg"],
     category: "mod",
-    stock: 15,
+    stock: 1500,
     specifications: {
       "Battery": "Dual 18650",
       "Wattage": "200W Max",
@@ -56,12 +56,12 @@ export const productData = [
     rating: { average: 4.8, count: 12 }
   },
   {
-    name: "Fruity E-Liquid Blend #4",
+    name: " RANDM TORNADO Black ice",
     description: "Premium e-liquid with natural fruit extracts and smooth throat hit.",
     price: 8,
     images: ["/images/products/4.jpg"],
     category: "e-liquid",
-    stock: 75,
+    stock: 7500,
     specifications: {
       "Volume": "30ml",
       "VG/PG": "70/30",
@@ -72,12 +72,12 @@ export const productData = [
     rating: { average: 4.3, count: 31 }
   },
   {
-    name: "Essential Vape Kit #5",
+    name: "TFVAPORDI Weeding Cake",
     description: "Complete starter kit with everything needed to begin vaping.",
     price: 8,
     images: ["/images/products/5.jpg"],
     category: "accessories",
-    stock: 28,
+    stock: 2800,
     specifications: {
       "Kit Contents": "Device, Charger, Manual",
       "Battery": "1000mAh",
@@ -88,12 +88,12 @@ export const productData = [
     rating: { average: 4.6, count: 25 }
   },
   {
-    name: "Premium Glass Tank #6",
+    name: " TFVAPORDI Runtz",
     description: "High-quality glass tank with leak-proof design and easy refill.",
     price: 8,
     images: ["/images/products/6.jpg"],
     category: "accessories",
-    stock: 40,
+    stock: 4000,
     specifications: {
       "Capacity": "5ml",
       "Material": "Pyrex Glass",
@@ -104,12 +104,12 @@ export const productData = [
     rating: { average: 4.4, count: 19 }
   },
   {
-    name: "Compact Disposable #7",
+    name: "TFVAPORDI Gelato 33",
     description: "Ultra-portable disposable vape perfect for on-the-go use.",
     price: 8,
     images: ["/images/products/7.jpg"],
     category: "disposable",
-    stock: 60,
+    stock: 6000,
     specifications: {
       "Battery": "600mAh",
       "Puffs": "1500+",
@@ -120,12 +120,12 @@ export const productData = [
     rating: { average: 4.2, count: 28 }
   },
   {
-    name: "Rechargeable Pod Device #8",
+    name: "FUMOT",
     description: "Innovative pod system with fast charging and long battery life.",
     price: 5,
     images: ["/images/products/8.jpg"],
     category: "pod-system",
-    stock: 35,
+    stock: 3500,
     specifications: {
       "Battery": "1500mAh",
       "Charging": "USB-C Fast Charge",
@@ -136,28 +136,28 @@ export const productData = [
     rating: { average: 4.7, count: 22 }
   },
   {
-    name: "Professional Mod Box #9",
+    name: "FUMOT Watermelon Ice",
     description: "High-end box mod with advanced chipset and safety features.",
     price: 5,
     images: ["/images/products/9.jpg"],
     category: "mod",
-    stock: 12,
+    stock: 1200,
     specifications: {
       "Chipset": "Advanced DNA",
       "Wattage": "250W Max",
       "Features": "TC, Bypass, Replay",
-      "Construction": "Carbon Fiber"
+      "Construction": "watermelon"
     },
     tags: ["professional", "high-end", "advanced"],
     rating: { average: 4.9, count: 8 }
   },
   {
-    name: "Sweet Dessert E-Juice #10",
+    name: "FUMOT Blueberry BubbleGum",
     description: "Decadent dessert-flavored e-liquid with creamy vanilla notes.",
     price: 5,
     images: ["/images/products/10.jpg"],
     category: "e-liquid",
-    stock: 45,
+    stock: 4500,
     specifications: {
       "Volume": "60ml",
       "VG/PG": "80/20",
@@ -168,12 +168,12 @@ export const productData = [
     rating: { average: 4.5, count: 33 }
   },
   {
-    name: "All-Day Vape Device #11",
+    name: " FUMOT Bluesour Rapesberry",
     description: "Reliable all-day vape with consistent performance and flavor.",
     price: 5,
     images: ["/images/products/11.jpg"],
     category: "disposable",
-    stock: 55,
+    stock: 5500,
     specifications: {
       "Battery": "1100mAh",
       "Puffs": "2500+",
@@ -184,12 +184,12 @@ export const productData = [
     rating: { average: 4.6, count: 27 }
   },
   {
-    name: "Sleek Pod Starter #12",
+    name: " CROWN BAR Gum Mint",
     description: "Elegant pod system designed for style and performance.",
     price: 8,
     images: ["/images/products/12.jpg"],
     category: "pod-system",
-    stock: 30,
+    stock: 3000,
     specifications: {
       "Design": "Sleek Aluminum",
       "Battery": "1300mAh",
@@ -200,12 +200,12 @@ export const productData = [
     rating: { average: 4.4, count: 21 }
   },
   {
-    name: "Powerful Mod Setup #13",
+    name: " CROWN BAR Berry Blue",
     description: "High-powered mod setup for cloud chasing enthusiasts.",
     price: 8,
     images: ["/images/products/13.jpg"],
     category: "mod",
-    stock: 18,
+    stock: 1800,
     specifications: {
       "Power": "220W Dual Battery",
       "Tank": "Sub-ohm Compatible",
@@ -216,28 +216,28 @@ export const productData = [
     rating: { average: 4.7, count: 15 }
   },
   {
-    name: "Menthol Mint Blend #14",
-    description: "Cool and refreshing menthol e-liquid with natural mint extracts.",
+    name: "CROWN BAR Blue ice Lemonade",
+    description: "Cool and refreshing Lemonade e-liquid with natural mint extracts.",
     price: 8,
     images: ["/images/products/14.jpg"],
     category: "e-liquid",
-    stock: 65,
+    stock: 1500,
     specifications: {
       "Volume": "30ml",
       "VG/PG": "60/40",
       "Nicotine": "12mg",
       "Profile": "Menthol/Mint"
     },
-    tags: ["menthol", "mint", "refreshing"],
+    tags: ["lemonade", "mint", "refreshing"],
     rating: { average: 4.3, count: 29 }
   },
   {
-    name: "Travel Vape Case #15",
+    name: "ELFBAR Blue Razz ice",
     description: "Protective carrying case for vape devices and accessories.",
     price: 6,
     images: ["/images/products/15.jpg"],
     category: "accessories",
-    stock: 70,
+    stock: 2000,
     specifications: {
       "Material": "EVA Hard Case",
       "Dimensions": "8x4x2 inches",
@@ -248,12 +248,12 @@ export const productData = [
     rating: { average: 4.2, count: 24 }
   },
   {
-    name: "Long-lasting Disposable #16",
+    name: " ELFBAR Miami Hint",
     description: "Extended-use disposable vape with premium coil technology.",
     price: 6,
     images: ["/images/products/16.jpg"],
     category: "disposable",
-    stock: 42,
+    stock: 1000,
     specifications: {
       "Battery": "1200mAh",
       "Puffs": "3000+",
@@ -264,12 +264,12 @@ export const productData = [
     rating: { average: 4.8, count: 20 }
   },
   {
-    name: "Smart Pod System #17",
+    name: "PACKMAN",
     description: "Intelligent pod system with app connectivity and usage tracking.",
     price: 7,
     images: ["/images/products/17.jpg"],
     category: "pod-system",
-    stock: 22,
+    stock: 1000,
     specifications: {
       "Connectivity": "Bluetooth 5.0",
       "App": "iOS/Android Compatible",
@@ -280,44 +280,44 @@ export const productData = [
     rating: { average: 4.6, count: 16 }
   },
   {
-    name: "Artisan Mod Collection #18",
+    name: "FRYD Blueberry",
     description: "Handcrafted mod with unique design and premium materials.",
     price: 10,
     images: ["/images/products/18.jpg"],
     category: "mod",
-    stock: 8,
+    stock: 1000,
     specifications: {
       "Material": "Stabilized Wood",
       "Craftsmanship": "Handmade",
       "Power": "Single 21700",
       "Finish": "Lacquered"
     },
-    tags: ["artisan", "handcrafted", "luxury"],
+    tags: ["blueberry", "handcrafted", "luxury"],
     rating: { average: 4.9, count: 6 }
   },
   {
-    name: "Tobacco Classic Blend #19",
-    description: "Authentic tobacco flavor with smooth and rich profile.",
+    name: "FRYD Watermelon",
+    description: "Authentic watermelon flavor with smooth and rich profile.",
     price: 10,
     images: ["/images/products/19.jpg"],
     category: "e-liquid",
-    stock: 38,
+    stock: 1000,
     specifications: {
       "Volume": "50ml",
       "VG/PG": "70/30",
       "Nicotine": "18mg",
       "Profile": "Classic Tobacco"
     },
-    tags: ["tobacco", "classic", "authentic"],
+    tags: ["watermelon", "fruit", "authentic"],
     rating: { average: 4.1, count: 26 }
   },
   {
-    name: "Premium Coil Pack #20",
+    name: " FRYD Tropical runtz punch",
     description: "High-quality replacement coils for enhanced flavor and vapor.",
     price: 10,
     images: ["/images/products/20.jpg"],
     category: "accessories",
-    stock: 85,
+    stock: 1000,
     specifications: {
       "Pack Size": "5 Coils",
       "Resistance": "0.4Ω",
@@ -328,12 +328,12 @@ export const productData = [
     rating: { average: 4.5, count: 42 }
   },
   {
-    name: "Ultra Compact Vape #21",
+    name: "Falcon-X Blue Razz Iced",
     description: "Smallest disposable vape with maximum portability and discretion.",
     price: 20,
     images: ["/images/products/21.jpg"],
     category: "disposable",
-    stock: 68,
+    stock: 1000,
     specifications: {
       "Size": "Ultra Compact",
       "Battery": "400mAh",
@@ -344,12 +344,12 @@ export const productData = [
     rating: { average: 4.0, count: 35 }
   },
   {
-    name: "Magnetic Pod Kit #22",
+    name: "Falcon JNR",
     description: "Innovative pod system with magnetic connection and easy refill.",
     price: 20,
     images: ["/images/products/22.jpg"],
     category: "pod-system",
-    stock: 26,
+    stock: 1000,
     specifications: {
       "Connection": "Magnetic",
       "Battery": "1100mAh",
@@ -360,12 +360,12 @@ export const productData = [
     rating: { average: 4.4, count: 19 }
   },
   {
-    name: "Competition Mod Setup #23",
-    description: "Professional competition-grade mod for serious vapers.",
+    name: "MUHA MEDS Exclusive",
+    description: "Professional competition-grade med for serious vapers.",
     price: 20,
     images: ["/images/products/23.jpg"],
     category: "mod",
-    stock: 5,
+    stock: 1000,
     specifications: {
       "Type": "Mechanical Mod",
       "Material": "Pure Copper",
@@ -376,12 +376,12 @@ export const productData = [
     rating: { average: 4.8, count: 9 }
   },
   {
-    name: "Tropical Fruit Mix #24",
-    description: "Exotic tropical fruit blend with multiple flavor notes.",
+    name: "MUHA MEDS Blue iced",
+    description: "Exotic Hybrid.",
     price: 20,
     images: ["/images/products/24.jpg"],
     category: "e-liquid",
-    stock: 52,
+    stock: 1000,
     specifications: {
       "Volume": "60ml",
       "VG/PG": "75/25",
@@ -392,12 +392,12 @@ export const productData = [
     rating: { average: 4.6, count: 30 }
   },
   {
-    name: "Precision Tool Kit #25",
-    description: "Complete tool kit for vape maintenance and coil building.",
+    name: "MUHA MEDS",
+    description: "melted diamond All-In-One.",
     price: 20,
     images: ["/images/products/25.jpg"],
     category: "accessories",
-    stock: 35,
+    stock: 1000,
     specifications: {
       "Tools": "15-piece Set",
       "Material": "Stainless Steel",
