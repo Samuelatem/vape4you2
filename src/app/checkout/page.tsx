@@ -123,9 +123,8 @@ export default function CheckoutPage() {
         throw new Error(paymentResult.error || 'Bitcoin payment initialization failed')
       }
 
-      // Clear cart and redirect to payment page for instructions
+      // Navigate to payment page first, clear cart after payment confirmation
       console.log('Payment successful, redirecting...')
-      clearCart()
       const paymentPath = `/payment?order=${encodeURIComponent(orderResult.order._id || orderResult.order.id)}&method=${encodeURIComponent(selectedPayment)}`
       console.log('Navigating to:', paymentPath)
 

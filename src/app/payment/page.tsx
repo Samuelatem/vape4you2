@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { Bitcoin, CreditCard, Smartphone, Banknote, Copy, CheckCircle, Clock, QrCode } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { formatPrice } from '@/lib/utils'
+import { useCartStore } from '@/store/cart'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -21,6 +22,7 @@ const paymentColors = {
 function PaymentContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { clearCart } = useCartStore()
   const orderId = searchParams?.get('order')
   const paymentMethod = (searchParams?.get('method') || 'bitcoin') as keyof typeof paymentIcons
   
@@ -58,6 +60,8 @@ function PaymentContent() {
         }
 
         setPaymentData(data.payment)
+        // Clear cart after successfully loading payment details
+        clearCart()
       } catch (error) {
         console.error('Error fetching payment:', error)
         alert('Error loading payment details. Returning to cart.')
@@ -68,7 +72,7 @@ function PaymentContent() {
     }
 
     fetchPaymentData()
-  }, [orderId, paymentMethod, router])
+  }, [orderId, paymentMethod, router, clearCart])
 
   const copyToClipboard = async (text: string, key: string) => {
     try {
