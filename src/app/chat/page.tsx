@@ -7,6 +7,7 @@ import { Send, MessageCircle, Users, Circle, RefreshCw, ArrowLeft } from 'lucide
 import { useSocket } from '@/hooks/useSocket'
 import { Button } from '@/components/ui/Button'
 import { formatDistance } from 'date-fns'
+import { playNotificationSound } from '@/lib/notifications'
 
 interface Message {
   id: string
@@ -123,6 +124,8 @@ export default function ChatPage() {
         const realtimeMessage = buildRealtimeMessage(payload, activeSession)
         if (realtimeMessage) {
           setMessages(prev => [...prev, realtimeMessage])
+          // Play sound notification for incoming message
+          playNotificationSound('message')
           // Scroll to bottom for active chat
           messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
         }

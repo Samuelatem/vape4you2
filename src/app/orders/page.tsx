@@ -10,6 +10,7 @@ import { Package, Clock, CheckCircle, XCircle, Eye } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { formatPrice } from '@/lib/utils'
 import { formatDistance } from 'date-fns'
+import { playNotificationSound } from '@/lib/notifications'
 
 interface OrderItem {
   productId: string
@@ -91,6 +92,13 @@ export default function OrdersPage() {
         if (newOrder.userId === session.user.id) {
           setOrders(prev => [newOrder, ...prev])
         }
+      })
+      socket.on('order-status-changed', ({ orderId, status, timestamp }: { orderId: string; status: string; timestamp: string }) => {
+        console.log(`📦 Order ${orderId} status changed to ${status}`)
+        // Update the order status in real-time
+        setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: status as any, updatedAt: timestamp } : o))
+        // Play sound notification to alert customer of order update
+        playNotificationSound('order-update')
       })
     }
   }, [session, status, router, socket])

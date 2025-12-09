@@ -9,6 +9,7 @@ import { Plus, Edit, Trash2, Package, DollarSign, Users, ShoppingCart, TrendingU
 import { Button } from '@/components/ui/Button'
 import { formatPrice } from '@/lib/utils'
 import { useSocket } from '@/hooks/useSocket'
+import { playNotificationSound } from '@/lib/notifications'
 
 interface VendorProduct {
   id?: string
@@ -139,6 +140,14 @@ export default function VendorDashboard() {
         // Refresh stats to reflect counts
         fetchVendorData()
       })
+
+      socket.on('new-order-payment', ({ orderId, userId, amount, paymentMethod, timestamp }) => {
+        console.log(`💰 Payment received for order ${orderId}: ${amount} via ${paymentMethod}`)
+        // Play sound notification to alert vendor
+        playNotificationSound('payment')
+        // Refresh data to show updated order status
+        fetchVendorData()
+      })
     }
 
     // Keep a fallback periodic refresh as safety
@@ -149,6 +158,7 @@ export default function VendorDashboard() {
       if (socket) {
         socket.off('order-created')
         socket.off('order-updated')
+        socket.off('new-order-payment')
       }
       if (interval) clearInterval(interval)
     }

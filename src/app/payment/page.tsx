@@ -266,7 +266,7 @@ function PaymentContent() {
                   <p>• Payment will be automatically detected</p>
                   <p>• You will receive an email confirmation</p>
                   <p>• Processing may take a few minutes</p>
-                  <p>• Contact support if you need assistance</p>
+                  <p>• Contact support if you need assistance:+31617201994</p>
                 </div>
 
                 <div className="mt-6 space-y-3">

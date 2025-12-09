@@ -102,6 +102,36 @@ export const initSocketServer = (res: NextApiResponseServerIO) => {
         })
       })
 
+      socket.on('order-paid', ({ orderId, userId, vendorId, amount, paymentMethod }) => {
+        console.log(`💰 Payment notification: Order ${orderId}`)
+        // Notify vendor (emit to vendor role room or specific vendor)
+        io.to('vendor').emit('new-order-payment', {
+          orderId,
+          userId,
+          amount,
+          paymentMethod,
+          timestamp: new Date().toISOString()
+        })
+        // Also notify specific user's room for acknowledgment
+        io.to(`user-${userId}`).emit('payment-confirmed', { orderId })
+      })
+
+      socket.on('order-status-updated', ({ orderId, status, vendorId, clientId }) => {
+        console.log(`📦 Order status update: Order ${orderId} -> ${status}`)
+        // Notify the client to update their orders list
+        io.to(`user-${clientId}`).emit('order-status-changed', {
+          orderId,
+          status,
+          timestamp: new Date().toISOString()
+        })
+        // Also broadcast to vendor room
+        io.to('vendor').emit('order-status-changed', {
+          orderId,
+          status,
+          timestamp: new Date().toISOString()
+        })
+      })
+
       socket.on('get-online-users', (callback) => {
         const onlineUsers = Array.from(connectedUsers.entries())
           .map(([id, user]) => ({
@@ -161,6 +191,15 @@ export const emitOrderUpdated = (order: any) => {
     // Broadcast updated order to vendor room and the specific user
     io.to('vendor').emit('order-updated', order)
     if (order.userId) io.to(`user-${order.userId}`).emit('order-updated', order)
+    
+    // Also emit specific status change event for clients listening for order-status-changed
+    if (order.status) {
+      io.to(`user-${order.userId}`).emit('order-status-changed', {
+        orderId: order.id || order._id,
+        status: order.status,
+        timestamp: new Date().toISOString()
+      })
+    }
   } catch (e) {
     console.error('emitOrderUpdated error', e)
   }
