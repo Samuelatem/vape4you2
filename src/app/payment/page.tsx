@@ -122,15 +122,15 @@ function PaymentContent() {
   const colorClass = paymentColors[paymentMethod] || 'bg-orange-500'
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-8">
+      <div className="max-w-4xl mx-auto px-2 sm:px-4 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-lg shadow-sm overflow-hidden"
         >
           {/* Header */}
-          <div className={`${colorClass} text-white p-6`}>
+          <div className={`${colorClass} text-white p-4 sm:p-6`}>
             <div className="flex items-center">
               <PaymentIcon className="w-8 h-8 mr-3" />
               <div>
@@ -143,8 +143,8 @@ function PaymentContent() {
           </div>
 
           {/* Payment Details */}
-          <div className="p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="p-4 sm:p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
               {/* Payment Instructions */}
               <div>
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">
@@ -224,7 +224,7 @@ function PaymentContent() {
                   Payment Status
                 </h2>
                 
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
                   <div className="flex items-center">
                     <Clock className="w-5 h-5 text-yellow-600 mr-2" />
                     <span className="font-semibold text-yellow-800">Waiting for Payment</span>
@@ -236,11 +236,11 @@ function PaymentContent() {
 
                 {/* QR Code for Bitcoin payment */}
                 <div className="text-center mb-6">
-                  <div className="bg-white border-2 border-gray-200 rounded-lg p-4 inline-flex flex-col items-center w-full max-w-sm mx-auto">
+                  <div className="bg-white border-2 border-gray-200 rounded-lg p-2 sm:p-4 inline-flex flex-col items-center w-full max-w-xs sm:max-w-sm mx-auto">
                     <img
-                      src={`https://chart.googleapis.com/chart?chs=256x256&cht=qr&chl=${encodeURIComponent(paymentData.qrCode)}&choe=UTF-8`}
+                      src={`https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(paymentData.qrCode)}&choe=UTF-8`}
                       alt="Bitcoin Payment QR Code"
-                      className="w-full max-w-xs sm:max-w-sm h-auto"
+                      className="w-full max-w-[180px] sm:max-w-xs h-auto"
                       loading="lazy"
                     />
                     <p className="text-sm text-gray-600 mt-2">
